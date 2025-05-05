@@ -1,0 +1,18 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "BUNDLE",
+    "kind": "RegularFile"
+  },
+  "applicationId": "com.example.powerguardian",
+  "variantName": "release",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "outputFile": "../../../../../../../../../../Applications/AS files/APK fles/PowerGuardian/release/app-release.aab"
+    }
+  ],
+  "elementType": "File"
+}
