@@ -1,5 +1,9 @@
 package com.example.powerguardian
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.result.contract.ActivityResultContracts
 import android.app.Activity
 import android.app.usage.UsageStatsManager
 import android.content.BroadcastReceiver
@@ -31,11 +35,19 @@ enum class ScreenState {
 }
 
 class MainActivity : ComponentActivity() {
+    private val notificationPermission = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { /* Monitoring can continue when notifications are declined. */ }
     private val eventReceivers = mutableListOf<BroadcastReceiver>()
     private var wakeLock: PowerManager.WakeLock? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
+            PackageManager.PERMISSION_GRANTED) {
+            notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
 
         eventReceivers += BehaviorLogger.registerScreenEvents(this)
         eventReceivers += BehaviorLogger.registerChargingEvents(this)
