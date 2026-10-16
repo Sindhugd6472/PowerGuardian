@@ -1,0 +1,7 @@
+# Local Android/Gradle output
+.gradle/
+.idea/
+**/build/
+local.properties
+*.iml
+.DS_Store

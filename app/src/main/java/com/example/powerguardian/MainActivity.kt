@@ -2,6 +2,7 @@ package com.example.powerguardian
 
 import android.app.Activity
 import android.app.usage.UsageStatsManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -30,13 +31,14 @@ enum class ScreenState {
 }
 
 class MainActivity : ComponentActivity() {
+    private val eventReceivers = mutableListOf<BroadcastReceiver>()
     private var wakeLock: PowerManager.WakeLock? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        BehaviorLogger.registerScreenEvents(this)
-        BehaviorLogger.registerChargingEvents(this)
+        eventReceivers += BehaviorLogger.registerScreenEvents(this)
+        eventReceivers += BehaviorLogger.registerChargingEvents(this)
 
         setContent {
             var screenState by remember { mutableStateOf(ScreenState.MAIN) }
@@ -189,7 +191,15 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onDestroy() {
+        eventReceivers.forEach { unregisterReceiver(it) }
+        eventReceivers.clear()
+        releaseWakeLock()
+        super.onDestroy()
+    }
+
     private fun acquireWakeLock() {
+        if (wakeLock?.isHeld == true) return
         val powerManager = getSystemService(POWER_SERVICE) as PowerManager
         wakeLock = powerManager.newWakeLock(
             PowerManager.PARTIAL_WAKE_LOCK,
@@ -200,6 +210,7 @@ class MainActivity : ComponentActivity() {
 
     private fun releaseWakeLock() {
         wakeLock?.let { if (it.isHeld) it.release() }
+        wakeLock = null
     }
 
     private fun startBatteryMonitoring() {
