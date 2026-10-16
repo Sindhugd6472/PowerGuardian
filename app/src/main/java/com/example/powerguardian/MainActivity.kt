@@ -105,6 +105,8 @@ class MainActivity : ComponentActivity() {
 
                             UsageClassifier.UsageLevel.MODERATE -> {
                                 Log.d("AutoMode", "MODERATE usage → Start Battery Monitoring")
+                                releaseWakeLock()
+                                stopService(Intent(this@MainActivity, PowerManagementService::class.java))
                                 startBatteryMonitoring()
                             }
 
@@ -114,6 +116,9 @@ class MainActivity : ComponentActivity() {
                                 stopService(Intent(this@MainActivity, PowerManagementService::class.java))
                             }
                         }
+                    } else {
+                        releaseWakeLock()
+                        stopService(Intent(this@MainActivity, PowerManagementService::class.java))
                     }
                 }
 

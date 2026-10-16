@@ -13,21 +13,26 @@ object UsageStatsHelper {
         return if (file.exists()) file.readText() else "No logs found."
     }
 
-    fun getUsageLevel(context: Context): Pair<UsageClassifier.UsageLevel, Int> {
-        val file = File(context.filesDir, "behavior_log.txt")
-        if (!file.exists()) return UsageClassifier.UsageLevel.LOW to 0
-
-        val currentHour = SimpleDateFormat("yyyy-MM-dd HH:", Locale.getDefault()).format(Date())
+    internal fun eventPercent(lines: List<String>, currentHour: String): Int {
         // Match the logger's zero-padded timestamp and today's date. Ignore app-list
         // continuation lines when calculating the fraction of timestamped events.
-        val entries = file.readLines().filter {
+        val entries = lines.filter {
             it.matches(Regex("""\d{4}-\d{2}-\d{2} \d{2}:.*""")) ||
                 it.startsWith("Top 5 Apps as of ")
         }
         val countInHour = entries.count {
             it.startsWith(currentHour) || it.startsWith("Top 5 Apps as of $currentHour")
         }
-        val percent = (countInHour * 100) / entries.size.coerceAtLeast(1)
+        return (countInHour * 100) / entries.size.coerceAtLeast(1)
+
+    }
+
+    fun getUsageLevel(context: Context): Pair<UsageClassifier.UsageLevel, Int> {
+        val file = File(context.filesDir, "behavior_log.txt")
+        if (!file.exists()) return UsageClassifier.UsageLevel.LOW to 0
+
+        val currentHour = SimpleDateFormat("yyyy-MM-dd HH:", Locale.getDefault()).format(Date())
+        val percent = eventPercent(file.readLines(), currentHour)
 
         val level = when {
             percent >= 70 -> UsageClassifier.UsageLevel.HIGH
