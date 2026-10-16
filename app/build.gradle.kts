@@ -20,10 +20,6 @@ android {
         compose = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "2.0.0"
-    }
-
     kotlinOptions {
         jvmTarget = "1.8"
     }

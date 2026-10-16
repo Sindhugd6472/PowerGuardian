@@ -27,7 +27,7 @@ object BehaviorLogger {
         }
     }
 
-    fun registerScreenEvents(context: Context) {
+    fun registerScreenEvents(context: Context): BroadcastReceiver {
         val screenReceiver = object : BroadcastReceiver() {
             override fun onReceive(ctx: Context, intent: Intent) {
                 when (intent.action) {
@@ -40,9 +40,10 @@ object BehaviorLogger {
             addAction(Intent.ACTION_SCREEN_ON)
             addAction(Intent.ACTION_SCREEN_OFF)
         })
+        return screenReceiver
     }
 
-    fun registerChargingEvents(context: Context) {
+    fun registerChargingEvents(context: Context): BroadcastReceiver {
         val chargingReceiver = object : BroadcastReceiver() {
             override fun onReceive(ctx: Context, intent: Intent) {
                 when (intent.action) {
@@ -55,6 +56,7 @@ object BehaviorLogger {
             addAction(Intent.ACTION_POWER_CONNECTED)
             addAction(Intent.ACTION_POWER_DISCONNECTED)
         })
+        return chargingReceiver
     }
 
     fun logTopApps(context: Context) {

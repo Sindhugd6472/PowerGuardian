@@ -14,3 +14,9 @@ AI-powered Android app for adaptive battery optimization using usage patterns an
 
 ## License
 MIT
+
+## Build and validation
+
+Use JDK 17, Android SDK 34 and the Gradle wrapper: `./gradlew testDebugUnitTest assembleDebug`. Local SDK paths belong in untracked local.properties. Gradle caches, IDE state and generated app/build output are excluded from source control.
+
+The Android 14 foreground service declares its required permissions and special-use description. WorkManager retains its own service declaration. Activity teardown unregisters its receivers and releases its wake lock; repeated acquisition reuses an already-held lock. Usage-event percentages match the logger's zero-padded date/hour and ignore continuation lines. These are event-log heuristics, not measured battery consumption or a trained AI model. AIPredictor is a random demo stub. Device validation, notification permission behavior and Android build verification are still required.
